@@ -8,7 +8,7 @@ echo "deb http://ppa.launchpad.net/adiscon/v8-stable/ubuntu trusty main\ndeb-src
 apt-get -y purge syslog-ng && \
 apt-get update && \
 apt-get -y install rsyslog && \
-apt-get -y -o Dpkg::Options::="--force-confold" install nginx-common nginx-extras passenger passenger-dev passenger-doc && \
+apt-get -y -o Dpkg::Options::="--force-confold" install nginx-common nginx-extras passenger passenger-dev passenger-doc emacs23-nox && \
 apt-get -y autoremove && \
 rm -rf /etc/rsyslog.d/* && \
 rm -rf /etc/logrotate.d/* && \
@@ -39,3 +39,24 @@ RUN apt-get update -o Dir::Etc::SourceList=/etc/apt/security.list -o Dir::Etc::S
 apt-get upgrade -yq -o Dir::Etc::SourceList=/etc/apt/security.list -o Dir::Etc::SourceParts=/tmp && \
 apt-get update && apt-get clean && rm -rf /var/lib/apt/lists/* && \
 /usr/sbin/logrotate -v /etc/logrotate.conf
+
+# enable sshd
+RUN rm -f /etc/service/sshd/down
+
+# Regenerate SSH host keys. baseimage-docker does not contain any, so you
+# have to do that yourself. You may also comment out this instruction; the
+# init system will auto-generate one during boot.
+RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
+
+# enable permanently the insure ssh key for login
+RUN /usr/sbin/enable_insecure_key
+
+COPY image/nsq-0.3.5.linux-amd64.go1.4.2/bin/ /usr/bin/
+COPY image/go1.4.2.linux-amd64                 /usr/local/
+COPY image/go1.4.2.linux-amd64/go/bin/        /usr/bin/
+
+EXPOSE 4150 4151 4160 4161 4170 4171
+
+VOLUME /data
+VOLUME /etc/ssl/certs
+

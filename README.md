@@ -1,4 +1,7 @@
-#A modified version of phusion/passenger-customizable
+# 
+
+# from github.com/rwky/phusion-passenger:
+#A modified version of phusion/passenger-customizable 
 
 This is a modified version of https://github.com/phusion/passenger-docker
 
