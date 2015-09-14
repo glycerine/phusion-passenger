@@ -1,6 +1,7 @@
 FROM phusion/passenger-customizable:0.9.17
-MAINTAINER Rowan Wookey <admin@rwky.net>
+# Use baseimage-docker's init process.
 ENV HOME /root
+
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5862E31D && \
 echo "deb http://ppa.launchpad.net/rwky/nodejs/ubuntu trusty main" > /etc/apt/sources.list.d/nodejs.list && \
 apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0F6DD8135234BF2B && \
@@ -54,9 +55,11 @@ RUN /usr/sbin/enable_insecure_key
 COPY image/nsq-0.3.5.linux-amd64.go1.4.2/bin/ /usr/bin/
 COPY image/go1.4.2.linux-amd64                 /usr/local/
 COPY image/go1.4.2.linux-amd64/go/bin/        /usr/bin/
+COPY image/src /usr/
 
 EXPOSE 4150 4151 4160 4161 4170 4171
 
 VOLUME /data
 VOLUME /etc/ssl/certs
 
+CMD ["/sbin/my_init"]
